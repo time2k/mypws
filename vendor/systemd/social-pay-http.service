@@ -1,0 +1,17 @@
+[Unit]
+Description="social-pay-http"
+Wants=network.target
+After=network.target
+
+[Service]
+User=www
+Group=www
+Type=simple
+ExecStart=/data/www/social_backend_pay/bin/social-pay-http-server
+ExecReload=/bin/kill --signal USR2 $MAINPID
+ExecStop=/bin/kill -9 $MAINPID
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
