@@ -49,7 +49,7 @@ func main() {
 	//初始化letsgo框架及组件
 	letsgo.NewLetsgo()
 	letsgo.Default.Init()
-	letsgo.Default.InitRedis(myconfig.REDIS_SERVER, myconfig.REDIS_OPTIONS)
+	letsgo.Default.InitRedis(1, myconfig.REDIS_SERVER, myconfig.REDIS_OPTIONS)
 	letsgo.Default.InitDBQuery(myconfig.DBconfigSet)
 	letsgo.Default.InitHTTPQuery(myconfig.HTTP_LOG)
 	letsgo.Default.InitLog(myconfig.ERROR_LOG)

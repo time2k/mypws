@@ -28,9 +28,9 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/shopspring/decimal v1.3.1
 	github.com/smartystreets/goconvey v1.7.2 // indirect
-	github.com/time2k/letsgo-ng v0.0.0-20220224184329-0ef3f6331977
+	github.com/time2k/letsgo-ng v0.0.0-20220227141237-a585b221ff24
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sys v0.0.0-20220224120231-95c6836cb0e7 // indirect
 	moul.io/http2curl v1.0.0 // indirect
 )
