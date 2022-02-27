@@ -68,6 +68,7 @@ func AddData(commp letsgo.CommonParams) error {
 	if u.Dateutc == "now" {
 		u.Dateutc = time.Now().Format("2006-01-02 15:04:05")
 	}
+	u.CreateDatetime = time.Now().Format("2006-01-02 15:04:05")
 
 	//https://support.weather.com/s/article/PWS-Upload-Protocol?language=en_US
 

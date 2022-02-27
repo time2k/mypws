@@ -106,9 +106,10 @@ func InsertData(commp letsgo.CommonParams, devicename string, data mytypedef.PWS
 	var debuginfo []letsgo.DebugInfo
 
 	dbq := letsgo.NewDBQueryBuilder()
-	dbq.SetSQL("INSERT INTO `pws_data` (`devicename`,`dateutc`,`createdatelocal`,`winddir`,`windspeedmph`,`windgustmph`,`windgustdir`,`windspdmph_avg2m`,`windgustmph_10m`,`windgustdir_10m`,`humidity`,`dewptf`,`tempf`,`rainin`,`dailyrainin`,`baromin`,`UV`,`solarradiation`,`indoortempf`,`indoorhumidity`,`softwaretype`) VALUES(?,?,NOW(),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+	dbq.SetSQL("INSERT INTO `pws_data` (`devicename`,`dateutc`,`createdatelocal`,`winddir`,`windspeedmph`,`windgustmph`,`windgustdir`,`windspdmph_avg2m`,`windgustmph_10m`,`windgustdir_10m`,`humidity`,`dewptf`,`tempf`,`rainin`,`dailyrainin`,`baromin`,`UV`,`solarradiation`,`indoortempf`,`indoorhumidity`,`softwaretype`) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
 	dbq.SetSQLcondition(devicename)
 	dbq.SetSQLcondition(data.Dateutc)
+	dbq.SetSQLcondition(data.CreateDatetime)
 	dbq.SetSQLcondition(data.Winddir)
 	dbq.SetSQLcondition(data.Windspeedmph)
 	dbq.SetSQLcondition(data.Windgustmph)

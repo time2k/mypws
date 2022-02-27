@@ -9,6 +9,7 @@ type PWSData struct {
 
 type PWSOutputData struct {
 	Dateutc          string  `json:"dateutc" form:"dateutc" query:"dateutc"`
+	CreateDatetime   string  `json:"createdatelocal" form:"createdatelocal" query:"createdatelocal"`
 	Winddir          int     `json:"winddir" form:"winddir" query:"winddir"`
 	Windspeedmph     float64 `json:"windspeedmph" form:"windspeedmph" query:"windspeedmph"`
 	Windgustmph      float64 `json:"windgustmph" form:"windgustmph" query:"windgustmph"`
