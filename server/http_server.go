@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/facebookgo/grace/gracehttp"
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/time2k/letsgo-ng"
@@ -14,6 +16,18 @@ import (
 	myconfig "mypws/config"
 	myhandler "mypws/handler"
 )
+
+type CustomValidator struct {
+	validator *validator.Validate
+}
+
+func (cv *CustomValidator) Validate(i interface{}) error {
+	if err := cv.validator.Struct(i); err != nil {
+		// Optionally, you could return the error to give each route more control over the status code
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	return nil
+}
 
 func main() {
 	log.Println(myconfig.PROJECT_NAME, "HTTP Server Start")
@@ -38,6 +52,8 @@ func main() {
 
 	//使用recover中间件
 	ec.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{DisablePrintStack: false}))
+
+	ec.Validator = &CustomValidator{validator: validator.New()}
 
 	//跨域
 	ec.Use(middleware.CORSWithConfig(middleware.CORSConfig{
