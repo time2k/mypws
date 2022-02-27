@@ -138,3 +138,35 @@ func InsertData(commp letsgo.CommonParams, devicename string, data mytypedef.PWS
 
 	return letsgo.BaseReturnData{Status: myconfig.StatusOk, Msg: "OK", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: debuginfo}
 }
+
+//SelectRealtimeData 查询数据
+func SelectRealtimeData(commp letsgo.CommonParams, devicename string) letsgo.BaseReturnData {
+	//初始化数据
+	var debuginfo []letsgo.DebugInfo
+	data := mytypedef.PWSOutputData{}
+
+	//MySQL数据库样例 组合成主键
+	cache_key := "mypws:realtimedata:" + devicename
+
+	dbq := letsgo.NewDBQueryBuilder()
+	dbq.UseCache = true
+	dbq.SetCacheKey(cache_key)
+	dbq.SetCacheExpire(600) //1秒钟超时
+	dbq.SetSQL("SELECT `dateutc`,`createdatelocal`,`winddir`,`windspeedmph`,`windgustmph`,`windgustdir`,`windspdmph_avg2m`,`windgustmph_10m`,`windgustdir_10m`,`humidity`,`dewptf`,`tempf`,`rainin`,`dailyrainin`,`baromin`,`UV`,`solarradiation`,`indoortempf`,`indoorhumidity`,`softwaretype` FROM `pws_devices` WHERE devicename = ? ORDER BY ID DESC LIMIT 1")
+	dbq.SetSQLcondition(devicename)
+	dbq.SetResult(&data) //传递指针类型struct
+	dbq.SetDbname("mypws")
+	//使用多条SQL查询
+	data_exists, err := letsgo.Default.DBQuery.SelectOne(dbq)
+	if err != nil {
+		letsgo.Default.Logger.Panicf("[Model]SelectRealtimeData: %s", err.Error())
+	}
+
+	debuginfo = append(debuginfo, dbq.DebugInfo)
+
+	if data_exists == false {
+		return letsgo.BaseReturnData{Status: myconfig.StatusNoData, Msg: "Nodata", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: debuginfo}
+	}
+
+	return letsgo.BaseReturnData{Status: myconfig.StatusOk, Msg: "OK", Body: data, IsDebug: commp.GetParam("debug"), DebugInfo: debuginfo}
+}

@@ -1,9 +1,13 @@
 package mytypedef
 
 type PWSData struct {
-	Action           string  `json:"action" form:"action" query:"action" validate:"required"`
-	ID               string  `json:"ID" form:"ID" query:"ID" validate:"required"`
-	PASSWORD         string  `json:"PASSWORD" form:"PASSWORD" query:"PASSWORD" validate:"required"`
+	Action   string `json:"action" form:"action" query:"action" validate:"required"`
+	ID       string `json:"ID" form:"ID" query:"ID" validate:"required"`
+	PASSWORD string `json:"PASSWORD" form:"PASSWORD" query:"PASSWORD" validate:"required"`
+	PWSOutputData
+}
+
+type PWSOutputData struct {
 	Dateutc          string  `json:"dateutc" form:"dateutc" query:"dateutc"`
 	Winddir          int     `json:"winddir" form:"winddir" query:"winddir"`
 	Windspeedmph     float64 `json:"windspeedmph" form:"windspeedmph" query:"windspeedmph"`

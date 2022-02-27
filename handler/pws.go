@@ -75,3 +75,26 @@ func AddData(commp letsgo.CommonParams) error {
 
 	return c.JSON(http.StatusOK, ret2.FormatNew())
 }
+
+func GetData(commp letsgo.CommonParams) error {
+	//通用参数处理，通用参数包括letsgo框架指针通过此结构体传递到model
+	c := commp.HTTPContext
+
+	reqParams := letsgo.ParamTrim(c.QueryParam("devicename"), c.QueryParam("intelval"))
+	devicename := reqParams[0]
+	interval := reqParams[1]
+
+	//查询设备名是否合法及被占用
+	ifmatch, _ := regexp.MatchString("[a-z0-9]+", devicename)
+	if !ifmatch {
+		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: "devicename invalid", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+		return c.JSON(http.StatusBadRequest, ret.FormatNew())
+	}
+
+	if interval == "realtime" {
+		ret := mymodel.SelectRealtimeData(commp, devicename)
+		return c.JSON(http.StatusOK, ret.FormatNew())
+	}
+
+	return c.JSON(http.StatusOK, nil)
+}
