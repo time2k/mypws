@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-playground/validator"
 	"github.com/labstack/echo"
 	"github.com/time2k/letsgo-ng"
 
@@ -13,18 +12,6 @@ import (
 	mytypedef "mypws/typedef"
 	"regexp"
 )
-
-type CustomValidator struct {
-	validator *validator.Validate
-}
-
-func (cv *CustomValidator) Validate(i interface{}) error {
-	if err := cv.validator.Struct(i); err != nil {
-		// Optionally, you could return the error to give each route more control over the status code
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	return nil
-}
 
 //AddDevice 苹果支付回调验证
 func AddDevice(commp letsgo.CommonParams) error {
@@ -44,12 +31,15 @@ func AddDevice(commp letsgo.CommonParams) error {
 		return c.String(http.StatusBadRequest, "devicename exists")
 	}
 
-	deviceid := mymodel.GenDeviceID()
-	passwd := mymodel.GenPassword()
+	deviceinfo := mytypedef.PWSDeviceInfo{}
 
-	mymodel.InsertDeviceInfo(commp, devicename, deviceid, passwd)
+	deviceinfo.DeviceName = devicename
+	deviceinfo.DeviceID = mymodel.GenDeviceID()
+	deviceinfo.Password = mymodel.GenPassword()
 
-	return c.String(http.StatusOK, "success"+" "+deviceid+" "+passwd)
+	ret := mymodel.InsertDeviceInfo(commp, deviceinfo)
+
+	return c.JSON(http.StatusOK, ret.FormatNew())
 }
 
 //AddData 添加数据
@@ -77,7 +67,7 @@ func AddData(commp letsgo.CommonParams) error {
 
 	//https://support.weather.com/s/article/PWS-Upload-Protocol?language=en_US
 
-	mymodel.InsertData(commp, deviceinfo.DeviceName, *u)
+	ret2 := mymodel.InsertData(commp, deviceinfo.DeviceName, *u)
 
-	return c.String(http.StatusOK, "success")
+	return c.JSON(http.StatusOK, ret2.FormatNew())
 }

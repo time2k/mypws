@@ -79,15 +79,15 @@ func DeviceNameCheckExists(commp letsgo.CommonParams, devicename string) bool {
 }
 
 //InsertDeviceInfo 插入设备信息
-func InsertDeviceInfo(commp letsgo.CommonParams, devicename, deviceid, password string) letsgo.BaseReturnData {
+func InsertDeviceInfo(commp letsgo.CommonParams, deviceinfo mytypedef.PWSDeviceInfo) letsgo.BaseReturnData {
 	//初始化数据
 	var debuginfo []letsgo.DebugInfo
 
 	dbq := letsgo.NewDBQueryBuilder()
 	dbq.SetSQL("INSERT INTO `pws_devices` (`devicename`,`deviceid`,`password`) VALUES(?,?,?)")
-	dbq.SetSQLcondition(devicename)
-	dbq.SetSQLcondition(deviceid)
-	dbq.SetSQLcondition(password)
+	dbq.SetSQLcondition(deviceinfo.DeviceName)
+	dbq.SetSQLcondition(deviceinfo.DeviceID)
+	dbq.SetSQLcondition(deviceinfo.Password)
 	dbq.SetDbname("mypws")
 	//使用多条SQL查询
 	_, err := letsgo.Default.DBQuery.EXEC(dbq)
@@ -97,7 +97,7 @@ func InsertDeviceInfo(commp letsgo.CommonParams, devicename, deviceid, password 
 
 	debuginfo = append(debuginfo, dbq.DebugInfo)
 
-	return letsgo.BaseReturnData{Status: myconfig.StatusOk, Msg: "OK", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: debuginfo}
+	return letsgo.BaseReturnData{Status: myconfig.StatusOk, Msg: "OK", Body: deviceinfo, IsDebug: commp.GetParam("debug"), DebugInfo: debuginfo}
 }
 
 //InsertData 插入数据
