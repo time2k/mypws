@@ -80,7 +80,7 @@ func GetData(commp letsgo.CommonParams) error {
 	//通用参数处理，通用参数包括letsgo框架指针通过此结构体传递到model
 	c := commp.HTTPContext
 
-	reqParams := letsgo.ParamTrim(c.QueryParam("devicename"), c.QueryParam("intelval"))
+	reqParams := letsgo.ParamTrim(c.QueryParam("devicename"), c.QueryParam("interval"))
 	devicename := reqParams[0]
 	interval := reqParams[1]
 
