@@ -19,7 +19,7 @@ var (
 	//MySQL数据库相关配置
 	DBconfigSet config.DBconfigStruct = config.DBconfigStruct{
 		"mypws": {
-			"master": config.DBconfig{DBhostsip: "127.0.0.1:3306", DBusername: "mypws", DBpassword: "mypws123!@#", DBname: "mypws", DBcharset: "utf8mb4", DBconnMaxConns: 20, DBconnMaxIdles: 2, DBconnMaxLifeTime: 1800 * time.Second},
+			"master": config.DBconfig{DBhostsip: "127.0.0.1:3306", DBusername: "mypws", DBpassword: "Mypws123!@#", DBname: "mypws", DBcharset: "utf8mb4", DBconnMaxConns: 20, DBconnMaxIdles: 2, DBconnMaxLifeTime: 1800 * time.Second},
 			"slave":  config.DBconfig{}, //如果为主从式，按照master格式填写从库信息
 		},
 	}
