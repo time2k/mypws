@@ -152,7 +152,7 @@ func SelectRealtimeData(commp letsgo.CommonParams, devicename string) letsgo.Bas
 	dbq := letsgo.NewDBQueryBuilder()
 	dbq.UseCache = true
 	dbq.SetCacheKey(cache_key)
-	dbq.SetCacheExpire(600) //1秒钟超时
+	dbq.SetCacheExpire(10) //10秒钟超时
 	dbq.SetSQL("SELECT `dateutc`,`createdatelocal`,`winddir`,`windspeedmph`,`windgustmph`,`windgustdir`,`windspdmph_avg2m`,`windgustmph_10m`,`windgustdir_10m`,`humidity`,`dewptf`,`tempf`,`rainin`,`dailyrainin`,`baromin`,`UV`,`solarradiation`,`indoortempf`,`indoorhumidity`,`softwaretype` FROM `pws_data` WHERE devicename = ? ORDER BY ID DESC LIMIT 1")
 	dbq.SetSQLcondition(devicename)
 	dbq.SetResult(&data) //传递指针类型struct
