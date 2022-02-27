@@ -41,7 +41,6 @@ func main() {
 
 	//跨域
 	ec.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		//AllowOrigins: []string{"https://mp.le.com", "https://lebz.le.com"},
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.OPTIONS},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccessControlRequestMethod, echo.HeaderAccessControlAllowHeaders},
