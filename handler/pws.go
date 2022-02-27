@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/labstack/echo"
 	"github.com/time2k/letsgo-ng"
 
 	myconfig "mypws/config"
@@ -24,11 +23,13 @@ func AddDevice(commp letsgo.CommonParams) error {
 	//查询设备名是否合法及被占用
 	ifmatch, _ := regexp.MatchString("[a-z0-9]+", devicename)
 	if !ifmatch {
-		return c.String(http.StatusBadRequest, "devicename invalid")
+		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: "devicename invalid", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+		return c.JSON(http.StatusBadRequest, ret.FormatNew())
 	}
 
 	if mymodel.DeviceNameCheckExists(commp, devicename) {
-		return c.String(http.StatusBadRequest, "devicename exists")
+		ret := letsgo.BaseReturnData{Status: myconfig.StatusError, Msg: "devicename exists!", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+		return c.JSON(http.StatusBadRequest, ret.FormatNew())
 	}
 
 	deviceinfo := mytypedef.PWSDeviceInfo{}
@@ -49,15 +50,18 @@ func AddData(commp letsgo.CommonParams) error {
 
 	u := new(mytypedef.PWSData)
 	if err := c.Bind(u); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: err.Error(), Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+		return c.JSON(http.StatusBadRequest, ret.FormatNew())
 	}
 	if err := c.Validate(u); err != nil {
-		return err
+		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: err.Error(), Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+		return c.JSON(http.StatusBadRequest, ret.FormatNew())
 	}
 
 	ret := mymodel.DeviceInfo(commp, u.ID, u.PASSWORD)
 	if ret.Status != myconfig.StatusOk {
-		return c.String(http.StatusBadRequest, "ID PASSWORD not match")
+		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: "ID,PASSWORD Invalid", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+		return c.JSON(http.StatusBadRequest, ret.FormatNew())
 	}
 	deviceinfo := ret.Body.(mytypedef.PWSDeviceInfo)
 
