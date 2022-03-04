@@ -44,7 +44,7 @@ export default {
     name: 'RealtimeData',
     data() {
         return {
-            api :'https://mypws.astrofans.net/data/get?devicename={devicename}&interval={interval}',
+            api :'https://mypws.astrofans.net/api/data/get?devicename={devicename}&interval={interval}',
             devicename: this.$route.query.devicename,
             interval: "realtime",
             PWSDataType: {
