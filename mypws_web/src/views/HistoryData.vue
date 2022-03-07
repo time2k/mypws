@@ -1,19 +1,15 @@
 <template>
 <div class="container" style="">
     <Navbar></Navbar>
-  <div class="small">
-    <line-chart :chart-data="datacollection"></line-chart>
-    <button @click="fillData()">Randomize</button>
-  </div>
+    <line-chart v-if="loaded" :chartdata="chartdata['tempf']" />
 </div>
 </template>
 
 <style>
 </style>
 
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-<script src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>-->
 <script>
+  import axios from 'axios'
   import LineChart from './Chart.vue'
 
   export default {
@@ -22,32 +18,129 @@
       'Navbar': () => import('./navbar'),
       LineChart
     },
-    data () {
-      return {
-        datacollection: null
-      }
+    data() {
+        return {
+        api :'https://mypws.astrofans.net/api/data/get?devicename={devicename}&interval={interval}',
+        devicename: this.$route.query.devicename,
+        interval: "daily",
+        PWSDataType: {
+            dateutc:{name:"数据时间",unit:"datetime-utc"},
+            createdatelocal:{name:"上报时间",unit:"datetime"},
+            winddir:{name:"风向",unit:"dir"},
+            windspeedmph:{name:"风速",unit:"mph"},
+            windgustmph:{name:"阵风风速",unit:"mph"},
+            windgustdir:{name:"阵风风向",unit:"dir"},
+            humidity:{name:"湿度",unit:"%"},
+            tempf:{name:"温度",unit:"f"},
+            rainin:{name:"1小时降水量",unit:"inchrain"},
+            baromin:{name:"气压",unit:"inchpress"},
+            UV:{name:"UV指数",unit:"uvindex"},
+            solarradiation:{name:"光照",unit:"wm2"},
+            indoortempf:{name:"室内温度",unit:"f"},
+            indoorhumidity:{name:"室内湿度",unit:"%"},
+        },
+        area:"china",
+        loaded: false,
+        chartdata: null,
+        }
     },
-    mounted () {
-      this.fillData()
+    async mounted () {
+        await this.getHistoryData()
     },
     methods: {
-      fillData () {
-        this.datacollection = {
-          labels: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()],
-          datasets: [
-            {
-              label: 'Data One',
-              backgroundColor: 'rgba(255, 99, 132, 0.2)',
-              borderColor: 'rgba(255, 99, 132, 0.8)',
-              tension: 0.1,
-              data: [this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt(), this.getRandomInt()]
+        async getHistoryData () {
+            this.api = this.api.replace('{devicename}', this.devicename).replace('{interval}', this.interval)
+            let res = await axios.get(this.api)
+            const ret = {}
+            if (res.status === 200 && res.data.data.list != null) {
+                for(var i in res.data.data.list) {
+                    var eachdata = res.data.data.list[i]
+                    
+                    for(let key in eachdata) {
+                        if(this.PWSDataType[key] != undefined) {
+                            if(ret[key] == undefined) {
+                                ret[key] = {datasets:[],labels:[]}
+                                ret[key].datasets.push({data:[],label:""})
+                            }
+                            let ev = this.changeValue(key, eachdata[key], this.area)
+                            ret[key].datasets[0].data.push(ev.value)
+                            ret[key].datasets[0].label = ev.unit
+                        
+                            ret[key].labels.push(eachdata.dateutc)
+                        }
+
+                    }
+                }
             }
-          ]
+            this.chartdata = ret
+            this.loaded = true
+        },
+        changeValue(key,value,area) {
+            let ret  = {}
+            if(area == "china") {
+                switch(this.PWSDataType[key].unit) {
+                    case "datetime-utc":
+                        ret = {value:value,unit:"UTC"}
+                        break
+                    case "datetime":
+                        ret = {value:value,unit:""}
+                        break
+                    case "dir":
+                        if(value==0) {
+                            ret = {value:"北",unit:""}
+                        } else if(value>0 && value<90) {
+                            ret = {value:"东北",unit:""}
+                        } else if(value==90) {
+                            ret = {value:"东",unit:""}
+                        } else if(value>90 && value<180) {
+                            ret = {value:"东南",unit:""}
+                        } else if(value==180) {
+                            ret = {value:"南",unit:""}
+                        } else if(value>180 && value<270) {
+                            ret = {value:"西南",unit:""}
+                        }  else if(value == 270) {
+                            ret = {value:"西",unit:""}
+                        } else if(value>270 && value<360) {
+                            ret = {value:"西北",unit:""}
+                        }
+                        break
+                    case "mph":
+                        ret = {value:(value*0.44704).toFixed(2),unit:"米/秒"}
+                        break
+                    case "f":
+                        if(value > -9999) {
+                            ret = {value:((value-32)/1.8).toFixed(1),unit:"摄氏度"}
+                        } else {
+                            ret = {value:"--",unit:"摄氏度"}
+                        }
+                        break
+                    case "%":
+                        if(value > -9999) {
+                            ret = {value:value,unit:"%"}
+                        } else {
+                            ret = {value:"--",unit:"%"}
+                        }
+                        break
+                    case "inchrain":
+                        ret = {value:(value*25.4).toFixed(1),unit:"毫米"}
+                        break
+                    case "inchpress":
+                        if(value > -9999) {
+                            ret = {value:(value*33.8638816).toFixed(1),unit:"百帕"}
+                        } else {
+                            ret = {value:"--",unit:"百帕"}
+                        }
+                        break
+                    case "uvindex":
+                        ret = {value:value,unit:"(1-5)"}
+                        break
+                    case "wm2":
+                        ret = {value:(value/0.0079).toFixed(1),unit:"lux"}
+                        break
+                }
+            }
+            return ret
         }
-      },
-      getRandomInt () {
-        return Math.floor(Math.random() * (50 - 5 + 1)) + 5
-      }
     }
   }
 </script>

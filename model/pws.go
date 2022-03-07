@@ -205,7 +205,7 @@ func SelectHistoryData(commp letsgo.CommonParams, devicename string, interval st
 	dbq.UseCache = true
 	dbq.SetCacheKey(cache_key)
 	dbq.SetCacheExpire(1800) //1800秒钟超时
-	dbq.SetSQL("SELECT `dateutc`,`createdatelocal`,`winddir`,`windspeedmph`,`windgustmph`,`windgustdir`,`windspdmph_avg2m`,`windgustmph_10m`,`windgustdir_10m`,`humidity`,`dewptf`,`tempf`,`rainin`,`dailyrainin`,`baromin`,`UV`,`solarradiation`,`indoortempf`,`indoorhumidity`,`softwaretype` FROM `pws_data` WHERE devicename = ? AND CONVERT_TZ(`dateutc`,'+00:00','+08:00') >= ? AND CONVERT_TZ(`dateutc`,'+00:00','+08:00') <= ? ORDER BY ID ASC")
+	dbq.SetSQL("SELECT CONVERT_TZ(`dateutc`,'+00:00','+08:00'),`createdatelocal`,`winddir`,`windspeedmph`,`windgustmph`,`windgustdir`,`windspdmph_avg2m`,`windgustmph_10m`,`windgustdir_10m`,`humidity`,`dewptf`,`tempf`,`rainin`,`dailyrainin`,`baromin`,`UV`,`solarradiation`,`indoortempf`,`indoorhumidity`,`softwaretype` FROM `pws_data` WHERE devicename = ? AND CONVERT_TZ(`dateutc`,'+00:00','+08:00') >= ? AND CONVERT_TZ(`dateutc`,'+00:00','+08:00') <= ? ORDER BY ID ASC")
 	dbq.SetSQLcondition(devicename)
 	dbq.SetSQLcondition(time_s)
 	dbq.SetSQLcondition(time_e)

@@ -41,10 +41,10 @@ import pic7 from "../assets/uv.png"
 import pic8 from "../assets/light.png"
 
 export default {
+    name: 'RealtimeData',
     components: {
       'Navbar': () => import('./navbar'),
     },
-    name: 'RealtimeData',
     data() {
         return {
             api :'https://mypws.astrofans.net/api/data/get?devicename={devicename}&interval={interval}',
