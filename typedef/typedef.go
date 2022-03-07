@@ -36,6 +36,10 @@ type PWSDeviceInfo struct {
 	Password   string
 }
 
+type PWSOutputDataList struct {
+	List []PWSOutputData `json:"list"`
+}
+
 /*
 CREATE TABLE `pws_data` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

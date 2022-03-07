@@ -95,7 +95,11 @@ func GetData(commp letsgo.CommonParams) error {
 	if interval == "realtime" {
 		ret := mymodel.SelectRealtimeData(commp, devicename)
 		return c.JSON(http.StatusOK, ret.FormatNew())
+	} else if interval == "daily" || interval == "weekly" || interval == "monthly" {
+		ret := mymodel.SelectHistoryData(commp, devicename, interval)
+		return c.JSON(http.StatusOK, ret.FormatNew())
+	} else {
+		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: "interval invalid", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+		return c.JSON(http.StatusBadRequest, ret.FormatNew())
 	}
-
-	return c.JSON(http.StatusOK, nil)
 }

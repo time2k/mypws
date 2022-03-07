@@ -14,6 +14,11 @@ const routes = [
     path: '/realtime',
     name: 'RealtimeData',
     component: () => import('../views/RealtimeData.vue')
+  },
+  {
+    path: '/history',
+    name: 'HistoryData',
+    component: () => import('../views/HistoryData.vue')
   }
 ]
 

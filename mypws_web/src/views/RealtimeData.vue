@@ -1,10 +1,11 @@
 <template>
 <div class="container" style="">
+    <Navbar></Navbar>
     <div class="page-header" id="banner">
         <div class="row">
           <div class="col-lg-8 col-md-7 col-sm-6">
-            <h1>pws实时数据</h1>
-            <p class="lead">{{devicename}}</p>
+            <h1>设备{{devicename}}实时数据</h1>
+            <p class="lead"></p>
           </div>
           <div class="col-lg-4 col-md-5 col-sm-6">
           </div>
@@ -39,8 +40,10 @@ import pic6 from "../assets/airpressure.png"
 import pic7 from "../assets/uv.png"
 import pic8 from "../assets/light.png"
 
-
 export default {
+    components: {
+      'Navbar': () => import('./navbar'),
+    },
     name: 'RealtimeData',
     data() {
         return {
