@@ -43,7 +43,7 @@
         return {
             api :'https://mypws.astrofans.net/api/data/get?devicename={devicename}&interval={interval}',
             devicename: this.$route.params.devicename,
-            interval: "weekly",
+            interval: "daily",
             PWSDataType: {
                 dateutc:{name:"数据时间",unit:"datetime-utc"},
                 createdatelocal:{name:"上报时间",unit:"datetime"},
