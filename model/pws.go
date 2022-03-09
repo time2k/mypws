@@ -187,8 +187,10 @@ func SelectHistoryData(commp letsgo.CommonParams, devicename string, interval st
 	t := time.Now()
 	switch interval {
 	case "daily":
-		time_s = time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.Local).Format("2006-01-02 15:04:05")
-		time_e = time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, time.Local).Format("2006-01-02 15:04:05")
+		ts := GetYesterday(t)
+		te := GetYesterday(t)
+		time_s = time.Date(ts.Year(), ts.Month(), ts.Day(), 0, 0, 0, 0, time.Local).Format("2006-01-02 15:04:05")
+		time_e = time.Date(te.Year(), te.Month(), te.Day(), 23, 59, 59, 0, time.Local).Format("2006-01-02 15:04:05")
 	case "weekly":
 		ts := GetMondayOfCurrentWeek(t)
 		te := GetSundayOfCurrentWeek(t)
@@ -224,6 +226,11 @@ func SelectHistoryData(commp letsgo.CommonParams, devicename string, interval st
 	}
 
 	return letsgo.BaseReturnData{Status: myconfig.StatusOk, Msg: "OK", Body: data, IsDebug: commp.GetParam("debug"), DebugInfo: debuginfo}
+}
+
+func GetYesterday(t time.Time) time.Time {
+	d := t.AddDate(0, 0, -1)
+	return d
 }
 
 func GetFirstDayOfMonth(t time.Time) time.Time {

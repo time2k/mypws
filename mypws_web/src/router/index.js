@@ -11,12 +11,12 @@ const routes = [
     component: Home
   },
   {
-    path: '/realtime',
+    path: '/realtime/:devicename',
     name: 'RealtimeData',
     component: () => import('../views/RealtimeData.vue')
   },
   {
-    path: '/history',
+    path: '/history/:devicename',
     name: 'HistoryData',
     component: () => import('../views/HistoryData.vue')
   }

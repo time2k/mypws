@@ -1,27 +1,25 @@
 <template>
-<div class="container" style="">
-    <Navbar></Navbar>
-    <div class="page-header" id="banner">
-        <div class="row">
-          <div class="col-lg-8 col-md-7 col-sm-6">
-            <h1>设备{{devicename}}实时数据</h1>
-            <p class="lead"></p>
-          </div>
-          <div class="col-lg-4 col-md-5 col-sm-6">
-          </div>
+    <div class="row">
+        <div class="page-header" id="banner">
+            <div class="row">
+            <div class="col-lg-8 col-md-7 col-sm-6">
+                <h1>设备{{devicename}}实时数据</h1>
+                <p class="lead"></p>
+            </div>
+            <div class="col-lg-4 col-md-5 col-sm-6">
+            </div>
+            </div>
         </div>
-      </div>
-  <div class="row">
-    <div class="col-6 col-sm-3" v-for="(item,key) in pwsinfo" :key="key">
-        <div class="card border-primary mb-3">
-        <div class="card-header" style="text-align:center"><img :src="PWSDataType[key].icon" class="img-responsive"><p>{{PWSDataType[key].name}}</p></div>
-        <div class="card-body">
-            <p class="card-text" style="text-align:center" :id="key">{{item.value}}&nbsp;{{item.unit}}</p>
-        </div>
+        <div class="col-6 col-sm-3" v-for="(item,key) in pwsinfo" :key="key">
+            <div class="card border-primary mb-3">
+            <div class="card-header" style="text-align:center"><img :src="PWSDataType[key].icon" class="img-responsive"><p>{{PWSDataType[key].name}}</p></div>
+            <div class="card-body">
+                <p class="card-text" style="text-align:center" :id="key">{{item.value}}&nbsp;{{item.unit}}</p>
+            </div>
+            </div>
         </div>
     </div>
-  </div>
-</div>
+    
 </template>
 
 <style>
@@ -42,13 +40,10 @@ import pic8 from "../assets/light.png"
 
 export default {
     name: 'RealtimeData',
-    components: {
-      'Navbar': () => import('./navbar'),
-    },
     data() {
         return {
             api :'https://mypws.astrofans.net/api/data/get?devicename={devicename}&interval={interval}',
-            devicename: this.$route.query.devicename,
+            devicename: this.$route.params.devicename,
             interval: "realtime",
             PWSDataType: {
                 dateutc:{name:"数据时间",icon:pic0,unit:"datetime-utc"},
@@ -67,10 +62,10 @@ export default {
                 indoorhumidity:{name:"室内湿度",icon:pic3,unit:"%"},
             },
             pwsinfo:{},
-            area:"china"
+            area:"china",
         }
     },
-    async created () {
+    async mounted () {
         await this.getRealtimeData()
     },
     methods: {
