@@ -4,7 +4,8 @@
             <div class="row">
             <div class="col-lg-8 col-md-7 col-sm-6">
                 <h1>设备{{devicename}}实时数据</h1>
-                <p class="lead"></p>
+                <p class="text-secondary">数据时间：{{dateutc.value}} {{dateutc.unit}}</p>
+                <p class="text-secondary">上报时间：{{createdatelocal.value}} {{createdatelocal.unit}}</p>
             </div>
             <div class="col-lg-4 col-md-5 col-sm-6">
             </div>
@@ -48,20 +49,22 @@ export default {
             PWSDataType: {
                 dateutc:{name:"数据时间",icon:pic0,unit:"datetime-utc"},
                 createdatelocal:{name:"上报时间",icon:pic0,unit:"datetime"},
-                winddir:{name:"风向",icon:pic1,unit:"dir"},
+                tempf:{name:"温度",icon:pic4,unit:"f"},
+                humidity:{name:"湿度",icon:pic3,unit:"%"},
                 windspeedmph:{name:"风速",icon:pic2,unit:"mph"},
+                baromin:{name:"气压",icon:pic6,unit:"inchpress"},
+                winddir:{name:"风向",icon:pic1,unit:"dir"},
                 windgustmph:{name:"阵风风速",icon:pic2,unit:"mph"},
                 windgustdir:{name:"阵风风向",icon:pic1,unit:"dir"},
-                humidity:{name:"湿度",icon:pic3,unit:"%"},
-                tempf:{name:"温度",icon:pic4,unit:"f"},
                 rainin:{name:"1小时降水量",icon:pic5,unit:"inchrain"},
-                baromin:{name:"气压",icon:pic6,unit:"inchpress"},
                 UV:{name:"UV指数",icon:pic7,unit:"uvindex"},
                 solarradiation:{name:"光照",icon:pic8,unit:"wm2"},
                 indoortempf:{name:"室内温度",icon:pic4,unit:"f"},
                 indoorhumidity:{name:"室内湿度",icon:pic3,unit:"%"},
             },
             pwsinfo:{},
+            dateutc:{},
+            createdatelocal:{},
             area:"china",
         }
     },
@@ -74,9 +77,16 @@ export default {
             let res = await axios.get(this.api)
             const ret = {}
             if (res.status === 200 && res.data.data != null) {
-                for(let key in res.data.data) {
-                    if(this.PWSDataType[key] != undefined) {
-                        ret[key] = this.changeValue(key, res.data.data[key], this.area)
+                var data = res.data.data
+                for(let key in this.PWSDataType) {
+                    if(data[key] != undefined) {
+                        if(key == "dateutc") {
+                            this.dateutc = this.changeValue(key, res.data.data[key], this.area)
+                        } else if(key == "createdatelocal") {
+                            this.createdatelocal = this.changeValue(key, res.data.data[key], this.area)
+                        } else {
+                            ret[key] = this.changeValue(key, res.data.data[key], this.area)
+                        }
                     }
                 }
                 this.pwsinfo = ret

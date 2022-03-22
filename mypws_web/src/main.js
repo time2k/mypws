@@ -4,10 +4,14 @@ import Vue from 'vue'
 import './plugins/bootstrap-vue'
 import App from './App.vue'
 import router from './router'
+import { Toast, Notify, Dialog } from 'vant'
 
 Vue.config.productionTip = false
 
 import "bootswatch/dist/litera/bootstrap.min.css";
+
+Vue.config.productionTip = false;
+Vue.use(Toast).use(Notify).use(Dialog)
 
 new Vue({
   router,
