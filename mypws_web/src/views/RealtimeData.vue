@@ -3,19 +3,52 @@
         <div class="page-header" id="banner">
             <div class="row">
             <div class="col-lg-8 col-md-7 col-sm-6">
-                <h1>设备{{devicename}}实时数据</h1>
-                <p class="text-secondary">数据时间：{{dateutc.value}} {{dateutc.unit}}</p>
-                <p class="text-secondary">上报时间：{{createdatelocal.value}} {{createdatelocal.unit}}</p>
             </div>
             <div class="col-lg-4 col-md-5 col-sm-6">
             </div>
             </div>
         </div>
-        <div class="col-6 col-sm-3" v-for="(item,key) in pwsinfo" :key="key">
-            <div class="card border-primary mb-3">
-            <div class="card-header" style="text-align:center"><img :src="PWSDataType[key].icon" class="img-responsive"><p>{{PWSDataType[key].name}}</p></div>
+        <div class="col-12 col-sm-6">
+            <div class="card border-light mb-3 main-data">
+            <div class="card-header" style="background-color:#f8f8f8">设备{{devicename}}实时数据
+            <p class="datetxt">数据时间：{{dateutc.value}} {{dateutc.unit}}&nbsp;&nbsp;上报时间：{{createdatelocal.value}} {{createdatelocal.unit}}</p>
+            </div>
+            <div class="card-body" v-if="pwsinfo.tempf">
+                <h1 class="card-title">
+                <!--<b-img :src="PWSDataType.tempf.icon" fluid></b-img>-->
+                {{PWSDataType.tempf.name}}
+                {{pwsinfo.tempf.value}}&nbsp;{{pwsinfo.tempf.unit}}
+                </h1>
+            </div>
+            <div class="card-body" v-if="pwsinfo.windspeedmph">
+                <h2 class="card-title">
+                <!--<b-img :src="PWSDataType.windspeedmph.icon" fluid></b-img>-->
+                {{PWSDataType.windspeedmph.name}}&nbsp;{{pwsinfo.windspeedmph.value}}&nbsp;{{pwsinfo.windspeedmph.unit}}
+                {{PWSDataType.winddir.name}}&nbsp;{{pwsinfo.winddir.value}}&nbsp;{{pwsinfo.winddir.unit}}
+                </h2>
+                <h6 class="card-subtitle" style="float:left;padding-left:2px;">
+                {{PWSDataType.windgustmph.name}}&nbsp;{{pwsinfo.windgustmph.value}}&nbsp;{{pwsinfo.windgustmph.unit}}
+                {{PWSDataType.windgustdir.name}}&nbsp;{{pwsinfo.windgustdir.value}}&nbsp;{{pwsinfo.windgustdir.unit}}
+                </h6>
+            </div>
             <div class="card-body">
-                <p class="card-text" style="text-align:center" :id="key">{{item.value}}&nbsp;{{item.unit}}</p>
+                <span class="badge rounded-pill bg-success" style="font-size:14px;margin:5px;" v-if="pwsinfo.humidity">{{PWSDataType.humidity.name}}&nbsp;{{pwsinfo.humidity.value}}&nbsp;{{pwsinfo.humidity.unit}}</span>
+                <span class="badge rounded-pill bg-primary" style="font-size:14px;margin:5px;" v-if="pwsinfo.dewpoint">{{PWSDataType.dewpoint.name}}&nbsp;{{pwsinfo.dewpoint.value}}&nbsp;{{pwsinfo.dewpoint.unit}}</span>
+                <span class="badge rounded-pill bg-primary" style="font-size:14px;margin:5px;" v-if="pwsinfo.baromin">{{PWSDataType.baromin.name}}&nbsp;{{pwsinfo.baromin.value}}&nbsp;{{pwsinfo.baromin.unit}}</span>
+                <span class="badge rounded-pill bg-primary" style="font-size:14px;margin:5px;" v-if="pwsinfo.rainin">{{PWSDataType.rainin.name}}&nbsp;{{pwsinfo.rainin.value}}&nbsp;{{pwsinfo.rainin.unit}}</span>
+                <span class="badge rounded-pill bg-light" style="font-size:14px;margin:5px;" v-if="pwsinfo.UV">{{PWSDataType.UV.name}}&nbsp;{{pwsinfo.UV.value}}&nbsp;{{pwsinfo.UV.unit}}</span>
+                <span class="badge rounded-pill bg-light" style="font-size:14px;margin:5px;" v-if="pwsinfo.solarradiation">{{PWSDataType.solarradiation.name}}&nbsp;{{pwsinfo.solarradiation.value}}&nbsp;{{pwsinfo.solarradiation.unit}}</span>
+                <span class="badge rounded-pill bg-primary" style="font-size:14px;margin:5px;" v-if="pwsinfo.indoortempf">{{PWSDataType.indoortempf.name}}&nbsp;{{pwsinfo.indoortempf.value}}&nbsp;{{pwsinfo.indoortempf.unit}}</span>
+                <span class="badge rounded-pill bg-primary" style="font-size:14px;margin:5px;" v-if="pwsinfo.indoorhumidity">{{PWSDataType.indoorhumidity.name}}&nbsp;{{pwsinfo.indoorhumidity.value}}&nbsp;{{pwsinfo.indoorhumidity.unit}}</span>
+                <span class="badge rounded-pill bg-primary" style="font-size:14px;margin:5px;" v-if="pwsinfo.indoordewpoint">{{PWSDataType.indoordewpoint.name}}&nbsp;{{pwsinfo.indoordewpoint.value}}&nbsp;{{pwsinfo.indoordewpoint.unit}}</span>
+            </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6">
+            <div class="card border-light mb-3">
+            <div class="card-header">设备{{devicename}}监控截图</div>
+            <div class="card-body" v-if="cctvimg">
+                <b-img :src="cctvimg" fluid alt=""></b-img>
             </div>
             </div>
         </div>
@@ -24,7 +57,12 @@
 </template>
 
 <style>
-
+.datetxt {
+    display:inline;font-size:12px;padding-left:20px;
+}
+.main-data {
+    background: rgba(0, 0, 0, .4) url('../assets/bg.png') no-repeat center center;
+}
 </style>
 
 <script>
@@ -38,6 +76,8 @@ import pic5 from "../assets/rain.png"
 import pic6 from "../assets/airpressure.png"
 import pic7 from "../assets/uv.png"
 import pic8 from "../assets/light.png"
+
+import dewcacl from "../components/dew.js"
 
 export default {
     name: 'RealtimeData',
@@ -61,11 +101,14 @@ export default {
                 solarradiation:{name:"光照",icon:pic8,unit:"wm2"},
                 indoortempf:{name:"室内温度",icon:pic4,unit:"f"},
                 indoorhumidity:{name:"室内湿度",icon:pic3,unit:"%"},
+                dewpoint:{name:"露点",icon:pic4,unit:"f"},
+                indoordewpoint:{name:"室内露点",icon:pic4,unit:"f"},
             },
             pwsinfo:{},
             dateutc:{},
             createdatelocal:{},
             area:"china",
+            cctvimg: "https://mypws.astrofans.net/files/"+this.$route.params.devicename+".jpg"
         }
     },
     async mounted () {
@@ -88,6 +131,21 @@ export default {
                             ret[key] = this.changeValue(key, res.data.data[key], this.area)
                         }
                     }
+                }
+                if(ret.humidity.value != "--" && ret.tempf.value != "--") {
+                    var dp1 = dewcacl.dewPoint(ret.humidity.value, dewcacl.stringToFloat(ret.tempf.value)+dewcacl.C_OFFSET)-dewcacl.C_OFFSET
+                    dp1 = dewcacl.truncate(dp1,2,2);
+                    ret.dewpoint = {value:dp1, unit:"℃"}
+                }
+                 else {
+                    ret.dewpoint = {value:"--", unit:"℃"}
+                }
+                if(ret.indoorhumidity.value != "--" && ret.indoortempf.value != "--") {
+                    var dp2 = dewcacl.dewPoint(ret.indoorhumidity.value, dewcacl.stringToFloat(ret.indoortempf.value)+dewcacl.C_OFFSET)-dewcacl.C_OFFSET
+                    dp2 = dewcacl.truncate(dp2,2,2);
+                   ret.indoordewpoint = {value:dp2, unit:"℃"}
+                } else {
+                    ret.indoordewpoint = {value:"--", unit:"℃"}
                 }
                 this.pwsinfo = ret
             }
@@ -126,9 +184,9 @@ export default {
                         break
                     case "f":
                         if(value > -9999) {
-                            ret = {value:((value-32)/1.8).toFixed(1),unit:"摄氏度"}
+                            ret = {value:((value-32)/1.8).toFixed(1),unit:"℃"}
                         } else {
-                            ret = {value:"--",unit:"摄氏度"}
+                            ret = {value:"--",unit:"℃"}
                         }
                         break
                     case "%":
