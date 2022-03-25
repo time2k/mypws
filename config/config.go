@@ -28,4 +28,7 @@ var (
 	//redis cluster相关
 	REDIS_SERVER  []string           = []string{"127.0.0.1:6379"}
 	REDIS_OPTIONS []redis.DialOption = []redis.DialOption{redis.DialConnectTimeout(5 * time.Second), redis.DialPassword(""), redis.DialReadTimeout(5 * time.Second)}
+
+	FILE_UPLOAD_DIR = "/tmp/uploads"
+	CDN_DOMAIN      = "https://mypws.astrofans.net/files"
 )

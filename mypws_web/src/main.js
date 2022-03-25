@@ -8,7 +8,8 @@ import { Toast, Notify, Dialog } from 'vant'
 
 Vue.config.productionTip = false
 
-import "bootswatch/dist/litera/bootstrap.min.css";
+//import "bootswatch/dist/litera/bootstrap.min.css";
+import "bootswatch/dist/cosmo/bootstrap.min.css";
 
 Vue.config.productionTip = false;
 Vue.use(Toast).use(Notify).use(Dialog)

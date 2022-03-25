@@ -265,3 +265,24 @@ func GetSundayOfCurrentWeek(t time.Time) time.Time {
 	}
 	return t.AddDate(0, 0, 7-offset)
 }
+
+//UpdateDeviceImg 更新设备图像
+func UpdateDeviceImg(commp letsgo.CommonParams, devicename string, imgurl string) letsgo.BaseReturnData {
+	//初始化数据
+	var debuginfo []letsgo.DebugInfo
+
+	dbq := letsgo.NewDBQueryBuilder()
+	dbq.SetSQL("REPLACE INTO `pws_device_imgs` (`devicename`,`imgurl`,`create_time`) VALUES(?,?,NOW())")
+	dbq.SetSQLcondition(devicename)
+	dbq.SetSQLcondition(imgurl)
+	dbq.SetDbname("mypws")
+	//使用多条SQL查询
+	_, err := letsgo.Default.DBQuery.EXEC(dbq)
+	if err != nil {
+		letsgo.Default.Logger.Panicf("[Model]UpdateDeviceImg: %s", err.Error())
+	}
+
+	debuginfo = append(debuginfo, dbq.DebugInfo)
+
+	return letsgo.BaseReturnData{Status: myconfig.StatusOk, Msg: "OK", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: debuginfo}
+}

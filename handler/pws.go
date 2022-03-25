@@ -7,6 +7,7 @@ import (
 	"github.com/time2k/letsgo-ng"
 
 	myconfig "mypws/config"
+	mylibs "mypws/libs"
 	mymodel "mypws/model"
 	mytypedef "mypws/typedef"
 	"regexp"
@@ -102,4 +103,37 @@ func GetData(commp letsgo.CommonParams) error {
 		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: "interval invalid", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
 		return c.JSON(http.StatusBadRequest, ret.FormatNew())
 	}
+}
+
+//AddImage 添加摄像头数据
+func AddImage(commp letsgo.CommonParams) error {
+	//通用参数处理，通用参数包括letsgo框架指针通过此结构体传递到model
+	c := commp.HTTPContext
+
+	reqParams := letsgo.ParamTrim(c.QueryParam("devicename"))
+	devicename := reqParams[0]
+
+	//查询设备名是否合法及被占用
+	ifmatch, _ := regexp.MatchString("[a-z0-9]+", devicename)
+	if !ifmatch {
+		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: "devicename invalid", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+		return c.JSON(http.StatusBadRequest, ret.FormatNew())
+	}
+
+	//文件上传
+	imgurl := ""
+	file, err := commp.HTTPContext.FormFile("avatar_imgurl_file")
+	if err == nil {
+		//排除可能是文件读取错误或未能找到该文件
+		if imgurl, err = mylibs.UploadPicFile(file, 512, 512, devicename); err != nil {
+			ret := letsgo.BaseReturnData{Status: 2011, Msg: err.Error(), Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+			return commp.HTTPContext.JSON(http.StatusOK, ret.FormatNew())
+		}
+
+		imgurl = myconfig.CDN_DOMAIN + imgurl
+	}
+
+	ret2 := mymodel.UpdateDeviceImg(commp, devicename, imgurl)
+
+	return c.JSON(http.StatusOK, ret2.FormatNew())
 }
