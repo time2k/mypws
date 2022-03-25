@@ -125,7 +125,7 @@ func AddImage(commp letsgo.CommonParams) error {
 	file, err := commp.HTTPContext.FormFile("image")
 	if err == nil {
 		//排除可能是文件读取错误或未能找到该文件
-		if imgurl, err = mylibs.UploadPicFile(file, 512, 512, devicename); err != nil {
+		if imgurl, err = mylibs.UploadPicFile(file, 5000, 5000, devicename); err != nil {
 			ret := letsgo.BaseReturnData{Status: 2011, Msg: err.Error(), Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
 			return commp.HTTPContext.JSON(http.StatusOK, ret.FormatNew())
 		}
