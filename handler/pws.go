@@ -113,7 +113,7 @@ func AddImage(commp letsgo.CommonParams) error {
 	reqParams := letsgo.ParamTrim(c.QueryParam("devicename"))
 	devicename := reqParams[0]
 
-	//查询设备名是否合法及被占用
+	//查询设备名是否合法及被占用-093wqw ve
 	ifmatch, _ := regexp.MatchString("[a-z0-9]+", devicename)
 	if !ifmatch {
 		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: "devicename invalid", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
