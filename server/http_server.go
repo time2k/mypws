@@ -84,7 +84,7 @@ func main() {
 	r.GET("/device/add", letsgo.Handler(myhandler.AddDevice)) //添加设备
 	r.GET("/data/add", letsgo.Handler(myhandler.AddData))     //添加数据
 	r.GET("/data/get", letsgo.Handler(myhandler.GetData))     //查询数据
-	r.GET("/image/get", letsgo.Handler(myhandler.AddImage))   //添加设备图像
+	r.GET("/image/add", letsgo.Handler(myhandler.AddImage))   //添加设备图像
 
 	//Start server
 	ec.Server.Addr = fmt.Sprint(":", myconfig.HTTP_SERVER_PORT)
