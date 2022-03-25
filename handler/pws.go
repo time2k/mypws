@@ -122,7 +122,7 @@ func AddImage(commp letsgo.CommonParams) error {
 
 	//文件上传
 	imgurl := ""
-	file, err := commp.HTTPContext.FormFile("avatar_imgurl_file")
+	file, err := commp.HTTPContext.FormFile("image")
 	if err == nil {
 		//排除可能是文件读取错误或未能找到该文件
 		if imgurl, err = mylibs.UploadPicFile(file, 512, 512, devicename); err != nil {
