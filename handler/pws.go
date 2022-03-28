@@ -2,6 +2,7 @@ package myhandler
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/time2k/letsgo-ng"
@@ -110,8 +111,9 @@ func AddImage(commp letsgo.CommonParams) error {
 	//通用参数处理，通用参数包括letsgo框架指针通过此结构体传递到model
 	c := commp.HTTPContext
 
-	reqParams := letsgo.ParamTrim(c.QueryParam("devicename"))
+	reqParams := letsgo.ParamTrim(c.QueryParam("devicename"), c.QueryParam("index"))
 	devicename := reqParams[0]
+	indexstr := reqParams[1]
 
 	//查询设备名是否合法及被占用-093wqw ve
 	ifmatch, _ := regexp.MatchString("[a-z0-9]+", devicename)
@@ -120,11 +122,21 @@ func AddImage(commp letsgo.CommonParams) error {
 		return c.JSON(http.StatusBadRequest, ret.FormatNew())
 	}
 
+	if indexstr == "" {
+		indexstr = "1"
+	}
+
+	if _, err := strconv.Atoi(indexstr); err != nil {
+		ret := letsgo.BaseReturnData{Status: myconfig.StatusParamsNoValid, Msg: "index number invalid", Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
+		return c.JSON(http.StatusBadRequest, ret.FormatNew())
+	}
+
 	//文件上传
 	imgurl := ""
 	file, err := commp.HTTPContext.FormFile("image")
 	if err == nil {
 		//排除可能是文件读取错误或未能找到该文件
+		devicename = devicename + indexstr
 		if imgurl, err = mylibs.UploadPicFile(file, 5000, 5000, devicename); err != nil {
 			ret := letsgo.BaseReturnData{Status: 2011, Msg: err.Error(), Body: nil, IsDebug: commp.GetParam("debug"), DebugInfo: nil}
 			return commp.HTTPContext.JSON(http.StatusOK, ret.FormatNew())

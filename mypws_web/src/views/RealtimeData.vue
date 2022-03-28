@@ -11,7 +11,7 @@
         <div class="col-12 col-sm-6">
             <div class="card border-light mb-3 main-data">
             <div class="card-header" style="background-color:#f8f8f8">设备{{devicename}}实时数据
-            <p class="datetxt">数据时间：{{dateutc.value}} {{dateutc.unit}}&nbsp;&nbsp;上报时间：{{createdatelocal.value}} {{createdatelocal.unit}}</p>
+            <p class="datetxt"><br>数据时间：{{dateutc.value}} {{dateutc.unit}}&nbsp;&nbsp;上报时间：{{createdatelocal.value}} {{createdatelocal.unit}}&nbsp;&nbsp;刷新间隔{{dinter/1000}}秒</p>
             </div>
             <div class="card-body" v-if="pwsinfo.tempf">
                 <h1 class="card-title">
@@ -46,9 +46,17 @@
         </div>
         <div class="col-12 col-sm-6">
             <div class="card border-light mb-3">
-            <div class="card-header">设备{{devicename}}监控截图</div>
-            <div class="card-body" v-if="cctvimg">
-                <b-img :src="cctvimg" fluid alt=""></b-img>
+            <div class="card-header">设备{{devicename}}监控截图1</div>
+            <div class="card-body" v-if="cctvimg1">
+                <b-img :src="cctvimg1" fluid alt=""></b-img>
+            </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6">
+            <div class="card border-light mb-3">
+            <div class="card-header">设备{{devicename}}监控截图2</div>
+            <div class="card-body" v-if="cctvimg2">
+                <b-img :src="cctvimg2" fluid alt=""></b-img>
             </div>
             </div>
         </div>
@@ -83,6 +91,7 @@ export default {
     name: 'RealtimeData',
     data() {
         return {
+            dinter: 30*1000,
             api :'https://mypws.astrofans.net/api/data/get?devicename={devicename}&interval={interval}',
             devicename: this.$route.params.devicename,
             interval: "realtime",
@@ -108,13 +117,26 @@ export default {
             dateutc:{},
             createdatelocal:{},
             area:"china",
-            cctvimg: "https://mypws.astrofans.net/files/"+this.$route.params.devicename+".jpg"
         }
     },
     async mounted () {
-        await this.getRealtimeData()
+        await this.d()
     },
     methods: {
+        d(){
+            this.getRealtimeData();
+            this.cctvimg1 = "https://mypws.astrofans.net/files/"+this.$route.params.devicename+"1.jpg";
+            this.cctvimg2 = "https://mypws.astrofans.net/files/"+this.$route.params.devicename+"2.jpg";
+            //设置好定时器，每1s调用一次
+            this.timer=setInterval(()=>{
+                this.getRealtimeData();
+                this.cctvimg1 = "https://mypws.astrofans.net/files/"+this.$route.params.devicename+"1.jpg?"+Math.random();
+                this.cctvimg2 = "https://mypws.astrofans.net/files/"+this.$route.params.devicename+"2.jpg?"+Math.random();
+            },this.dinter)
+        },
+        dcancel(){
+            clearInterval(this.timer)
+        },
         async getRealtimeData () {
             this.api = this.api.replace('{devicename}', this.devicename).replace('{interval}', this.interval)
             let res = await axios.get(this.api)
